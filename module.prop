@@ -1,0 +1,7 @@
+id=aod_wallpaper
+name=AOD Wallpaper (Xiaomi 15 · Apple-Style · 1Hz LTPO)
+version=v1.0
+versionCode=100
+author=Cheese
+description=Apple-style Always-On Display wallpaper for Xiaomi 15 (SM8750). Features 90% anti-burn-in dimming, 1Hz LTPO hardware optimization, grey/blur filter options, and hot-reload config.
+updateJson=https://raw.githubusercontent.com/Cheese-nya/aod-wallpaper/main/update.json
