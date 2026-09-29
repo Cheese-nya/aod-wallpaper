@@ -1,0 +1,26 @@
+# ========================================================
+# 小米 15 (SM8750 / dada) 硬件级 1Hz LTPO & SurfaceFlinger 优化
+# ========================================================
+
+# 1. SurfaceFlinger 空闲降频时间缩短至 50ms (静态画面瞬间切 1Hz)
+ro.surface_flinger.set_idle_timer_ms=50
+
+# 2. 息屏与亮屏电源状态切换时，100ms 内完成降频调度
+ro.surface_flinger.set_display_power_timer_ms=100
+
+# 3. 触摸松开后 150ms 允许降频
+ro.surface_flinger.set_touch_timer_ms=150
+
+# 4. 开启内容自适应刷新率检测 (AOD 静态画面判定为 0/1 fps)
+ro.surface_flinger.use_content_detection_for_refresh_rate=true
+
+# 5. 高通骁龙 8 至尊版 (SM8750) SDE / HWC 底层 1Hz 降频支持
+vendor.display.enable_null_rrs=1
+vendor.display.idle_time=50
+vendor.display.idle_fps=1
+
+# 6. 允许最低渲染帧率降至 1
+ro.surface_flinger.min_render_rate=1
+
+# 7. 异步信号锁存与平滑上屏
+debug.sf.latch_unsignaled=1
