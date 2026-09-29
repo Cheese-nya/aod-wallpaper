@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AOD 全天候显示高级设置 (小米 15 专版)</title>
+    <style>
+        :root {
+            --primary: #a8c7fa;
+            --on-primary: #042f65;
+            --primary-container: #0842a0;
+            --on-primary-container: #d3e3fd;
+            --background: #111318;
+            --surface: #1a1c22;
+            --surface-variant: #282a32;
+            --on-surface: #e2e2e9;
+            --on-surface-variant: #c4c6d0;
+            --outline: #44474f;
+            --accent: #7cacf8;
+            --card-bg: #1f2129;
+            --success: #6dd58c;
+            --danger: #ffb4ab;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--on-surface);
+            padding: 16px;
+            padding-bottom: 90px;
+        }
+
+        header {
+            margin-bottom: 20px;
+            padding: 12px 4px;
+        }
+
+        header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        header p {
+            font-size: 13px;
+            color: var(--on-surface-variant);
+            margin-top: 6px;
+        }
+
+        .badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: var(--primary-container);
+            color: var(--on-primary-container);
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .setting-info {
+            flex: 1;
+            padding-right: 16px;
+        }
+
+        .setting-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--on-surface);
+        }
+
+        .setting-desc {
+            font-size: 12px;
+            color: var(--on-surface-variant);
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        /* Switch toggle */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--surface-variant);
+            transition: .3s;
+            border-radius: 34px;
+            border: 1px solid var(--outline);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--on-surface-variant);
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+            background-color: var(--on-primary);
+        }
+
+        /* Segmented control / Radio pills */
+        .segmented-group {
+            display: flex;
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 4px;
+            gap: 4px;
+            margin-top: 10px;
+        }
+
+        .segmented-btn {
+            flex: 1;
+            text-align: center;
+            padding: 10px 6px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--on-surface-variant);
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .segmented-btn.active {
+            background: var(--primary);
+            color: var(--on-primary);
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .chip-btn {
+            background: var(--surface-variant);
+            color: var(--on-surface);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .chip-btn:active {
+            background: var(--primary-container);
+            color: var(--on-primary-container);
+        }
+
+        /* Console / Diagnostic output */
+        .terminal-box {
+            background: #0d0e12;
+            border-radius: 10px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #79c0ff;
+            max-height: 140px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-top: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Bottom Action Bar */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 28, 34, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            gap: 12px;
+            z-index: 99;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .action-btn.primary {
+            background: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .action-btn.secondary {
+            background: var(--surface-variant);
+            color: var(--on-surface);
+        }
+
+        .tip-card {
+            background: rgba(124, 172, 248, 0.08);
+            border-left: 4px solid var(--primary);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--on-surface-variant);
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>AOD 全天候显示设置</h1>
+            <span class="badge">小米 15 专版 v1.0</span>
+        </div>
+        <p>独立配置全天候息屏壁纸、滤镜效果与 1Hz LTPO 变频策略 · by Cheese</p>
+    </header>
+
+    <div class="tip-card">
+        ✨ <strong>v1.0 正式版核心特性：</strong><br>
+        1. <strong>Apple-Style 防烧屏</strong>：底层 90% 极黑遮罩，壁纸仅透出 10% 亮度，完美防止 OLED 静态烧屏。<br>
+        2. <strong>亮度锁死 0.0f</strong>：从 SystemUI 到框架层全链路硬锁死，杜绝息屏后亮度回弹。<br>
+        3. <strong>1Hz LTPO 硬件驱动降频</strong>：骁龙 8 至尊版专属极限省电，续航大幅提升。<br>
+    </div>
+
+    <!-- 视觉滤镜与显示效果 -->
+    <div class="card">
+        <div class="card-title">
+            <span>视觉滤镜与显示效果</span>
+        </div>
+
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-name">AOD 全天候壁纸显示</div>
+                <div class="setting-desc">息屏后维持壁纸渲染，呈现 iOS 风格常亮显示</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="sw_wallpaper" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-name">息屏壁纸模糊滤镜 (可选项)</div>
+                <div class="setting-desc"><strong>默认关闭（纯净灰色滤镜，清晰无模糊）</strong>；开启后将在壁纸上叠加窗口高斯模糊</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="sw_blur">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <!-- 刷新率管理 -->
+    <div class="card">
+        <div class="card-title">
+            <span>AOD 刷新率与变频策略</span>
+        </div>
+        <div class="setting-desc" style="margin-bottom: 8px;">选择息屏状态下的屏幕驱动刷新模式：</div>
+
+        <div class="segmented-group" id="group_fps">
+            <div class="segmented-btn active" data-fps="1">1Hz 极限省电<br><small style="font-size:10px;">(8T-LTPO 自刷新)</small></div>
+            <div class="segmented-btn" data-fps="30">30Hz 平衡<br><small style="font-size:10px;">(防频闪模式)</small></div>
+            <div class="segmented-btn" data-fps="60">60Hz 标准<br><small style="font-size:10px;">(原生兼容)</small></div>
+        </div>
+
+        <div class="setting-item" style="margin-top: 14px;">
+            <div class="setting-info">
+                <div class="setting-name">解除系统最小刷新率锁定</div>
+                <div class="setting-desc">将系统 min_refresh_rate 设为 0，允许 SurfaceFlinger 彻底降频</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="sw_unlock_min_fps" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <!-- 硬件诊断与驱动节点 -->
+    <div class="card">
+        <div class="card-title">
+            <span>小米 15 硬件状态诊断</span>
+            <button class="chip-btn" onclick="refreshDiag()" style="padding: 2px 10px; font-size: 11px;">刷新检测</button>
+        </div>
+        <div class="setting-desc">读取内核真实驱动节点与滤镜状态：</div>
+        <div class="terminal-box" id="diag_box">正在连接系统驱动节点...</div>
+    </div>
+
+    <!-- 底部操作栏 -->
+    <div class="bottom-bar">
+        <button class="action-btn secondary" onclick="restartUI()">重启 SystemUI</button>
+        <button class="action-btn primary" onclick="saveSettings()">保存并立即应用</button>
+    </div>
+
+    <script>
+        const isKSU = typeof ksu !== 'undefined';
+        const isApatch = typeof apatch !== 'undefined';
+        const isMMRL = typeof mmrl !== 'undefined';
+
+        function exec(cmd) {
+            return new Promise((resolve) => {
+                if (isKSU) {
+                    try {
+                        const res = ksu.exec(cmd);
+                        resolve(res);
+                    } catch (e) {
+                        resolve({ errno: -1, stdout: '', stderr: e.toString() });
+                    }
+                } else if (isApatch) {
+                    try {
+                        const res = apatch.exec(cmd);
+                        resolve(res);
+                    } catch (e) {
+                        resolve({ errno: -1, stdout: '', stderr: e.toString() });
+                    }
+                } else if (isMMRL) {
+                    try {
+                        // MMRL usually returns a promise with stdout
+                        mmrl.su(cmd).then(res => {
+                            resolve({ errno: 0, stdout: res, stderr: '' });
+                        }).catch(e => {
+                            resolve({ errno: -1, stdout: '', stderr: e.toString() });
+                        });
+                    } catch (e) {
+                        resolve({ errno: -1, stdout: '', stderr: e.toString() });
+                    }
+                } else {
+                    console.log('Exec: ' + cmd);
+                    resolve({ errno: 0, stdout: 'Simulated OK: ' + cmd, stderr: '未检测到受支持的 Root API (请在 KernelSU / Apatch / MMRL 管理器内打开)' });
+                }
+            });
+        }
+
+        // 刷新率选择
+        document.querySelectorAll('#group_fps .segmented-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#group_fps .segmented-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // 硬件诊断刷新
+        async function refreshDiag() {
+            const box = document.getElementById('diag_box');
+            box.textContent = '正在检测驱动与滤镜节点...';
+            
+            const cmd = `
+                echo "[小米 15 运行状态报告]"
+                echo "时间: $(date '+%H:%M:%S')"
+                echo -n "窗口模糊滤镜状态 (disable_window_blurs): "
+                dwb=$(settings get global disable_window_blurs 2>/dev/null)
+                if [ "$dwb" = "1" ]; then
+                    echo "1 (已关闭模糊 -> 默认灰色滤镜生效)"
+                else
+                    echo "0 (模糊滤镜开启)"
+                fi
+                echo -n "wp_aod 硬件驱动: "
+                cat /sys/class/mi_display/disp-DSI-0/wp_aod 2>/dev/null || echo "未找到或默认"
+                echo -n "高通 idle_fps: "
+                cat /sys/class/drm/*/idle_fps 2>/dev/null | head -n 1 || echo "未定义"
+                echo -n "系统 min_refresh_rate: "
+                settings get system min_refresh_rate 2>/dev/null || echo "默认"
+            `;
+            const res = await exec(cmd);
+            box.textContent = res.stdout || res.stderr || '无法读取，请确认已授予 Root 权限。';
+        }
+
+        // 保存设置
+        async function saveSettings() {
+            const wpEnabled = document.getElementById('sw_wallpaper').checked ? 1 : 0;
+            const blurEnabled = document.getElementById('sw_blur').checked ? 1 : 0;
+            const unlockFps = document.getElementById('sw_unlock_min_fps').checked ? 1 : 0;
+            const fpsBtn = document.querySelector('#group_fps .segmented-btn.active');
+            const targetFps = fpsBtn ? fpsBtn.getAttribute('data-fps') : '1';
+
+            const modDir = "/data/adb/modules/aod_wallpaper";
+            const cfgFile = `${modDir}/config.prop`;
+
+            const cmd = `
+                # 1. 写入配置文件
+                cat << 'EOF' > ${cfgFile}
+# AOD Configuration (Updated via WebUI v1.0)
+AOD_WALLPAPER_ENABLE=${wpEnabled}
+AOD_BLUR_FILTER=${blurEnabled}
+AOD_REFRESH_RATE=${targetFps}
+AOD_UNLOCK_MIN_FPS=${unlockFps}
+EOF
+
+                # 2. 实时应用壁纸开关
+                settings put secure doze_always_on 1
+                settings put secure doze_always_on_wallpaper_enabled ${wpEnabled}
+
+                # 3. 实时应用模糊滤镜
+                if [ "${blurEnabled}" = "1" ]; then
+                    settings put global disable_window_blurs 0
+                else
+                    settings put global disable_window_blurs 1
+                fi
+                
+                # 4. 解除最小刷新率锁定
+                if [ "${unlockFps}" = "1" ]; then
+                    settings put system min_refresh_rate 0.0
+                fi
+
+                # 5. 下发硬件驱动节点
+                if [ -f "/sys/class/mi_display/disp-DSI-0/wp_aod" ]; then
+                    echo ${targetFps == '1' ? '1' : '0'} > /sys/class/mi_display/disp-DSI-0/wp_aod 2>/dev/null
+                fi
+
+                for node in /sys/class/drm/*/idle_fps; do
+                    [ -f "$node" ] && echo ${targetFps} > "$node" 2>/dev/null
+                done
+
+                echo "SAVED_OK"
+            `;
+
+            await exec(cmd);
+            const filterName = blurEnabled === 1 ? "模糊滤镜已开启" : "默认灰色滤镜已生效（无模糊）";
+            alert(`设置已成功保存并立即生效！\n当前滤镜：${filterName}\n息屏壁纸开关：${wpEnabled === 1 ? "开启" : "关闭"}`);
+            refreshDiag();
+        }
+
+        // 重启 SystemUI
+        async function restartUI() {
+            if (confirm('确认重启 SystemUI 界面吗？（屏幕会黑屏约 1-2 秒）')) {
+                await exec('killall com.android.systemui');
+            }
+        }
+
+        // 读取设置
+        async function loadSettings() {
+            const cmd = 'cat /data/adb/modules/aod_wallpaper/config.prop 2>/dev/null';
+            const res = await exec(cmd);
+            if (res.stdout && res.stdout.includes('AOD_WALLPAPER_ENABLE')) {
+                const config = res.stdout;
+                const getVal = (key) => {
+                    const match = config.match(new RegExp(`${key}=(\\d+)`));
+                    return match ? match[1] : null;
+                };
+
+                const wp = getVal('AOD_WALLPAPER_ENABLE');
+                const blur = getVal('AOD_BLUR_FILTER');
+                const fps = getVal('AOD_REFRESH_RATE');
+                const unlock = getVal('AOD_UNLOCK_MIN_FPS');
+
+                if (wp !== null) document.getElementById('sw_wallpaper').checked = (wp === '1');
+                if (blur !== null) document.getElementById('sw_blur').checked = (blur === '1');
+                if (unlock !== null) document.getElementById('sw_unlock_min_fps').checked = (unlock === '1');
+                
+                if (fps !== null) {
+                    document.querySelectorAll('#group_fps .segmented-btn').forEach(b => b.classList.remove('active'));
+                    const targetBtn = document.querySelector(`#group_fps .segmented-btn[data-fps="${fps}"]`);
+                    if (targetBtn) targetBtn.classList.add('active');
+                }
+            }
+        }
+
+        window.onload = function() {
+            loadSettings();
+            refreshDiag();
+        };
+    </script>
+</body>
+</html>
